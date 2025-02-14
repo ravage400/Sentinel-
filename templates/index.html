@@ -4,48 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sentinel-Intel</title>
+
+    <!-- Bootstrap 5 for Styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body {
+            background-color: #1a1a1a;
+            color: white;
             font-family: Arial, sans-serif;
             text-align: center;
-            padding: 50px;
-            background-color: #f4f4f4;
+            padding: 20px;
         }
-        h1 {
-            color: #333;
-        }
-        p {
-            color: #555;
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
         }
         textarea {
-            width: 80%;
+            width: 100%;
             height: 100px;
             margin: 10px 0;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
+            background: #333;
             color: white;
             border: none;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
             cursor: pointer;
+            width: 100%;
+            border-radius: 5px;
         }
         button:hover {
             background-color: #0056b3;
         }
+        canvas {
+            background: #222;
+            padding: 10px;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
-    <h1>Sentinel-Intel is Running!</h1>
-    <p>This is your AI-powered misinformation detector.</p>
 
-    <form method="POST">
-        <textarea name="text" placeholder="Enter text for analysis..."></textarea><br>
-        <button type="submit">Analyze</button>
-    </form>
+    <div class="container">
+        <h1>Sentinel-Intel</h1>
+        <p>Analyze text for misinformation, emotional manipulation, and risk levels.</p>
 
-    {% if result %}
-        <h3>Analysis Result:</h3>
-        <p>{{ result }}</p>
-    {% endif %}
+        <form method="POST">
+            <textarea name="text" placeholder="Enter text or URL for analysis..."></textarea><br>
+            <button type="submit">Analyze</button>
+        </form>
+
+        {% if result %}
+            <h3>Analysis Result:</h3>
+            <p>{{ result }}</p>
+
+            <canvas id="sentimentChart"></canvas>
+            <script>
+                var ctx = document.getElementById('sentimentChart').getContext('2d');
+                var sentimentChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Positive', 'Negative', 'Neutral'],
+                        datasets: [{
+                            label: 'Sentiment Analysis',
+                            data: [{{ chart_data.positive }}, {{ chart_data.negative }}, {{ chart_data.neutral }}],
+                            backgroundColor: ['#28a745', '#dc3545', '#ffc107']
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            </script>
+        {% endif %}
+    </div>
+
 </body>
 </html>
