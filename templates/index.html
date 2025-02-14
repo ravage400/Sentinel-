@@ -17,10 +17,35 @@
         p {
             color: #555;
         }
+        textarea {
+            width: 80%;
+            height: 100px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <h1>Sentinel-Intel is Running!</h1>
     <p>This is your AI-powered misinformation detector.</p>
+
+    <form method="POST">
+        <textarea name="text" placeholder="Enter text for analysis..."></textarea><br>
+        <button type="submit">Analyze</button>
+    </form>
+
+    {% if result %}
+        <h3>Analysis Result:</h3>
+        <p>{{ result }}</p>
+    {% endif %}
 </body>
 </html>
