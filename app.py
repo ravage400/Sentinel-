@@ -1,35 +1,27 @@
 from flask import Flask, render_template, request
-import random
+from transformers import pipeline
 
 app = Flask(__name__)
+
+# Load a pre-trained misinformation detection model
+nlp = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
     result = ""
-    chart_data = {"positive": 0, "negative": 0, "neutral": 0}
-
     if request.method == 'POST':
         user_input = request.form['text']
-        result = analyze_text(user_input)
+        result = analyze_text(user_input)  # Analyze text with the model
+    
+    return render_template("index.html", result=result)
 
-        # Generate random chart data for now
-        chart_data = {
-            "positive": random.randint(20, 50),
-            "negative": random.randint(10, 40),
-            "neutral": random.randint(10, 40)
-        }
-
-    return render_template("index.html", result=result, chart_data=chart_data)
-
-# Simple function to detect misinformation keywords
 def analyze_text(text):
-    misinformation_keywords = ["fake news", "hoax", "conspiracy", "misleading", "false claims"]
-    for keyword in misinformation_keywords:
-        if keyword.lower() in text.lower():
-            return "⚠️ Potential misinformation detected!"
-    return "✅ No misinformation detected."
+    """Use a pre-trained model to detect misinformation"""
+    labels = ["true", "false", "misleading"]
+    result = nlp(text, candidate_labels=labels)
+    return f"Prediction: {result['labels'][0]} (Confidence: {round(result['scores'][0] * 100, 2)}%)"
 
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0
+    app.run(host="0.0.0.0", port=port)
