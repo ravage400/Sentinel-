@@ -3,20 +3,22 @@ from transformers import pipeline
 
 app = Flask(__name__)
 
-# Load a pre-trained misinformation detection model
-nlp = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+# Load the AI model once (Fast Processing)
+print("Loading AI model... This may take a few seconds.")
+nlp = pipeline("zero-shot-classification", model="valhalla/distilbart-mnli-12-3")
+print("AI model loaded successfully!")
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
     result = ""
     if request.method == 'POST':
         user_input = request.form['text']
-        result = analyze_text(user_input)  # Analyze text with the model
+        result = analyze_text(user_input)  # AI analysis
     
     return render_template("index.html", result=result)
 
 def analyze_text(text):
-    """Use a pre-trained model to detect misinformation"""
+    """Use the AI model to detect misinformation"""
     labels = ["true", "false", "misleading"]
     result = nlp(text, candidate_labels=labels)
     return f"Prediction: {result['labels'][0]} (Confidence: {round(result['scores'][0] * 100, 2)}%)"
